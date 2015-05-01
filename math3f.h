@@ -2,7 +2,7 @@
 //Header only math lib
 ////////////////////////////////////////////
 
-//Thanks, Carmack!
+//
 float qrsqrt(const float &n)
 {
 	long i;
