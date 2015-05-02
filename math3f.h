@@ -20,19 +20,22 @@ float qrsqrt(const float &n)
 	return y;
 }
 
-float sqrt(const float &n)
+float qsqrt(const float &n)
 {
 	return n * qrsqrt(n);
 }
 
-//Types
+///////////////////////////////////////////////
+//Vector3f
+///////////////////////////////////////////////
+
+//types
 struct vec3f
 {
 	vec3f(float x, float y, float z) : x(x), y(y), z(z){}
-	float length(){return sqrt(x*x + y*y + z*z);}
+	float length() const {return qsqrt(x*x + y*y + z*z);}
 	float x, y, z;
 };
-
 
 ///////////////////////////////////////////////
 //Operators
@@ -71,14 +74,18 @@ vec3f operator/=(vec3f &a, const float &f){
 
 ///////////////////////////////////////////////
 //
-float dot(vec3f a, vec3f b)
-{
-	return a.x * b.x + a.y * b.y + a.z * b.z;
-}
+float dot(const vec3f &a, const vec3f &b){
+	return a.x * b.x + a.y * b.y + a.z * b.z;}
 
-vec3f cross(vec3f a, vec3f b)
-{
-	return vec3f(0, 0, 0);
-}
+vec3f cross(const vec3f &a, const vec3f &b){
+	return vec3f(a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x);}
 
+vec3f normalize(const vec3f &a){
+	return a / a.length();}
 //
+
+
+///////////////////////////////////////////////
+//Matrices
+///////////////////////////////////////////////
+
