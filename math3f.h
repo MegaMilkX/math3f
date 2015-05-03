@@ -30,24 +30,11 @@ float qsqrt(const float &n)
 ///////////////////////////////////////////////
 
 //types
-struct vec3f
-{
-	vec3f() : x(0), y(0), z(0){}
-	vec3f(float x, float y, float z) : x(x), y(y), z(z){}
-	float length() const {return qsqrt(x*x + y*y + z*z);}
-	union { float x, r; };
-	union { float y, g; };
-	union { float z, b; };
-	float operator[](const int &i) const {
-		return *((&x) + i);}
-	float& operator[](const int &i){
-		return *((&x) + i);}
-};
-
 struct vec4f
 {
 	vec4f() : x(0), y(0), z(0), w(0) {}
 	vec4f(float x, float y, float z, float w) : x(x), y(y), z(z), w(w){}
+	float length() const { return qsqrt(x*x + y*y + z*z + w*w); }
 	union { float x, r; };
 	union { float y, g; };
 	union { float z, b; };
@@ -58,6 +45,20 @@ struct vec4f
 		return *((&x) + i);}
 };
 
+struct vec3f
+{
+	vec3f() : x(0), y(0), z(0){}
+	vec3f(float x, float y, float z) : x(x), y(y), z(z){}
+	vec3f(const vec4f& v) : x(v.x), y(v.y), z(v.z){}
+	float length() const {return qsqrt(x*x + y*y + z*z);}
+	union { float x, r; };
+	union { float y, g; };
+	union { float z, b; };
+	float operator[](const int &i) const {
+		return *((&x) + i);}
+	float& operator[](const int &i){
+		return *((&x) + i);}
+};
 
 //Operators
 //addition and substraction
@@ -98,6 +99,8 @@ vec3f operator*=(vec3f &a, const float &f){
 
 vec3f operator/(const vec3f &a, const float &f){
 	return vec3f(a.x / f, a.y / f, a.z / f);}
+vec4f operator/(const vec4f &a, const float &f){
+	return vec4f(a.x / f, a.y / f, a.z / f, a.w / f);}
 
 vec3f operator/=(vec3f &a, const float &f){
 	return a / f;}
@@ -112,6 +115,9 @@ vec3f cross(const vec3f &a, const vec3f &b){
 vec3f normalize(const vec3f &a){
 	return a / a.length();}
 
+vec4f normalize(const vec4f &a){
+	return a / a.length();}
+
 
 ///////////////////////////////////////////////
 //Matrices
@@ -120,6 +126,14 @@ vec3f normalize(const vec3f &a){
 
 struct mat3f
 {
+	mat3f(float xx, float xy, float xz,
+		float yx, float yy, float yz,
+		float zx, float zy, float zz)
+	{
+		v[0].x = xx; v[0].y = xy; v[0].z = xz;
+		v[1].x = yx; v[1].y = yy; v[1].z = yz;
+		v[2].x = zx; v[2].y = zy; v[2].z = zz;
+	}
 	vec3f operator[](const int &i) const {
 		return v[i];}
 	vec3f& operator[](const int &i){
@@ -162,6 +176,36 @@ mat4f operator*(const mat4f &m0, const mat4f &m1){
 				m[i][j] += m0[k][j] * m1[i][k];
 	return m;}
 
+//Rewrite these to be more cache-friendly
+vec4f operator*(const mat4f &m, const vec4f &v)
+{
+	vec4f r;
+	for (int i = 0; i < 4; i++)
+		for (int k = 0; k < 4; k++)
+			r[i] += m[k][i] * v[k];
+	return r;
+}
+
+//Taking vec3 as vec4 and assuming v.w is zero
+//so it transforms as a direction vector
+vec3f operator*(const mat4f &m, const vec3f &v)
+{
+	vec3f r;
+	for (int i = 0; i < 3; i++)
+		for (int k = 0; k < 3; k++)
+			r[i] += m[k][i] * v[k];
+	return r;
+}
+
+vec3f operator*(const mat3f &m, const vec3f &v)
+{
+	vec3f r;
+	for (int i = 0; i < 3; i++)
+		for (int k = 0; k < 3; k++)
+			r[i] += m[k][i] * v[k];
+	return r;
+}
+
 //
 mat3f transpose(const mat3f &m)
 {
@@ -181,11 +225,34 @@ mat4f transpose(const mat4f &m)
 
 typedef vec4f quat;
 
+quat operator*(const quat &q0, const quat &q1)
+{
+	return quat((q0.w * q1.x + q1.w * q0.x) + (q0.y * q1.z - q1.y * q0.z),
+				(q0.w * q1.y + q1.w * q0.y) + (q1.x * q0.z - q0.x * q1.z), //Inverted, since y axis rotation is inverted
+				(q0.w * q1.z + q1.w * q0.z) + (q0.x * q1.y - q1.x * q0.y),
+				(q1.w * q0.w) - (q1.x * q0.x) - (q1.y * q0.y) - (q1.z * q0.z));
+}
+
+vec3f rotate(const quat &q, const vec3f &v)
+{
+	//TODO
+}
+
+quat angleAxis(const float &a, const vec3f &axis)
+{
+	float s = sin(a * 0.5f);
+	return quat(axis.x * s, axis.y * s, axis.z * s, cos(a*0.5f));
+}
 
 ///////////////////////////////////////////////
 //Conversion
 ///////////////////////////////////////////////
-mat3f toMat3(quat q)
+mat3f toMat3(const quat &q)
 {
-	//TODO
+	mat3f m = { 1 - 2 * q.y * q.y - 2 * q.z * q.z,			q.z * 2 * q.w + 2 * q.x * q.y,			-q.y * 2 * q.w + 2 * q.x * q.z,
+				
+				-q.z * 2 * q.w + 2 * q.x * q.y,				1 - 2 * q.x * q.x - 2 * q.z * q.z,		q.x * 2 * q.w + 2 * q.y * q.z,
+
+				q.y * 2 * q.w + 2 * q.x * q.z,				-q.x * 2 * q.w + 2 * q.y * q.z,			1 - 2 * q.x * q.x - 2 * q.y * q.y };
+	return m;
 }
