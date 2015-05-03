@@ -90,11 +90,16 @@ vec4f operator-(const vec4f &a){
 //multiplication and division
 vec3f operator*(const vec3f &a, const float &f){
 	return vec3f(a.x * f, a.y * f, a.z * f);}
-
 vec3f operator*(const float &f, const vec3f &a){
 	return vec3f(a.x * f, a.y * f, a.z * f);}
+vec4f operator*(const vec4f &a, const float &f){
+	return vec4f(a.x * f, a.y * f, a.z * f, a.w * f);}
+vec4f operator*(const float &f, const vec4f &a){
+	return vec4f(a.x * f, a.y * f, a.z * f, a.w * f);}
 
 vec3f operator*=(vec3f &a, const float &f){
+	return a = a*f;}
+vec4f operator*=(vec4f &a, const float &f){
 	return a = a*f;}
 
 vec3f operator/(const vec3f &a, const float &f){
@@ -127,6 +132,12 @@ vec4f normalize(const vec4f &a){
 struct mat3f
 {
 	mat3f(){}
+	explicit mat3f(const float &f)
+	{
+		v[0][0] = f;
+		v[1][1] = f;
+		v[2][2] = f;
+	}
 	mat3f(float xx, float xy, float xz,
 		float yx, float yy, float yz,
 		float zx, float zy, float zz)
@@ -146,6 +157,13 @@ private:
 struct mat4f
 {
 	mat4f(){}
+	explicit mat4f(const float &f)
+	{
+		v[0][0] = f;
+		v[1][1] = f;
+		v[2][2] = f;
+		v[3][3] = f;
+	}
 	vec4f operator[](const int &i) const {
 		return v[i];}
 	vec4f& operator[](const int &i){
@@ -218,6 +236,22 @@ mat4f transpose(const mat4f &m)
 {
 	//TODO
 	return mat4f();
+}
+
+mat4f scale(const mat4f &m, const vec3f &v)
+{
+	mat4f r = m;
+	r[0] *= v[0];
+	r[1] *= v[1];
+	r[2] *= v[2];
+	return r;
+}
+
+mat4f translate(const mat4f &m, const vec3f &v)
+{
+	mat4f r = m;
+	r[3] = m[0] * v[0] + m[1] * v[1] + m[2] * v[2] + m[3];
+	return r;
 }
 
 ///////////////////////////////////////////////
