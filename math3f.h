@@ -126,6 +126,7 @@ vec4f normalize(const vec4f &a){
 
 struct mat3f
 {
+	mat3f(){}
 	mat3f(float xx, float xy, float xz,
 		float yx, float yy, float yz,
 		float zx, float zy, float zz)
