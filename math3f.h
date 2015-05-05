@@ -187,24 +187,24 @@ private:
 
 inline mat4f operator+(const mat4f &m0, const mat4f &m1){
 	mat4f m;
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 4; ++i)
 		m[i] = m0[i] + m1[i];
 	return m;}
 
 inline mat3f operator*(const mat3f &m0, const mat3f &m1){
 	mat3f m;
-	for (int i = 0; i < 3; i++)
-		for (int j = 0; j < 3; j++)
-			for (int k = 0; k < 3; k++)
+	for (int i = 0; i < 3; ++i)
+		for (int j = 0; j < 3; ++j)
+			for (int k = 0; k < 3; ++k)
 				m[i][j] += m0[k][j] * m1[i][k];
 	return m;
 }
 
 inline mat4f operator*(const mat4f &m0, const mat4f &m1){
 	mat4f m;
-	for (int i = 0; i < 4; i++)
-		for (int j = 0; j < 4; j++)
-			for (int k = 0; k < 4; k++)
+	for (int i = 0; i < 4; ++i)
+		for (int j = 0; j < 4; ++j)
+			for (int k = 0; k < 4; ++k)
 				m[i][j] += m0[k][j] * m1[i][k];
 	return m;}
 
@@ -212,8 +212,8 @@ inline mat4f operator*(const mat4f &m0, const mat4f &m1){
 inline vec4f operator*(const mat4f &m, const vec4f &v)
 {
 	vec4f r;
-	for (int i = 0; i < 4; i++)
-		for (int k = 0; k < 4; k++)
+	for (int i = 0; i < 4; ++i)
+		for (int k = 0; k < 4; ++k)
 			r[i] += m[k][i] * v[k];
 	return r;
 }
@@ -223,8 +223,8 @@ inline vec4f operator*(const mat4f &m, const vec4f &v)
 inline vec3f operator*(const mat4f &m, const vec3f &v)
 {
 	vec3f r;
-	for (int i = 0; i < 3; i++)
-		for (int k = 0; k < 3; k++)
+	for (int i = 0; i < 3; ++i)
+		for (int k = 0; k < 3; ++k)
 			r[i] += m[k][i] * v[k];
 	return r;
 }
@@ -232,8 +232,8 @@ inline vec3f operator*(const mat4f &m, const vec3f &v)
 inline vec3f operator*(const mat3f &m, const vec3f &v)
 {
 	vec3f r;
-	for (int i = 0; i < 3; i++)
-		for (int k = 0; k < 3; k++)
+	for (int i = 0; i < 3; ++i)
+		for (int k = 0; k < 3; ++k)
 			r[i] += m[k][i] * v[k];
 	return r;
 }
@@ -390,8 +390,8 @@ inline mat4f inverse(const mat4f &m)
 
 	det = 1.0f / det;
 
-	for (int j = 0; j < 4; j++)
-		for (int i = 0; i < 4; i++)
+	for (int j = 0; j < 4; ++j)
+		for (int i = 0; i < 4; ++i)
 			inv[i][j] *= det;
 
 	return inv;
