@@ -4,6 +4,8 @@
 #include <math.h>
 #include <assert.h>
 
+#define PI 3.14159265359f
+
 ////////////////////////////////////////////
 //Header only math lib
 ////////////////////////////////////////////
@@ -468,6 +470,21 @@ inline mat4f toMat4(const quat &q)
 	mat4f m(1.0f);
 	m = toMat3(q);
 	return m;
+}
+
+///////////////////////////////////////////////
+//Interpolation
+///////////////////////////////////////////////
+inline float clamp(float f, float a, float b)
+{
+	f = f < a ? a : (f > b ? b : f);
+	return f;
+}
+
+inline float smoothstep(float a, float b, float x)
+{
+	x = clamp((x - a) / (b - a), 0.0f, 1.0f);
+	return x * x * (3 - 2 * x);
 }
 
 #endif
