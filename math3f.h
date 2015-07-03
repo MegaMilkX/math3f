@@ -38,35 +38,61 @@ inline float qsqrt(const float &n)
 ///////////////////////////////////////////////
 
 //types
-struct vec4f
+template<typename T>
+struct vec4
 {
-	vec4f() : x(0), y(0), z(0), w(0) {}
-	vec4f(float x, float y, float z, float w) : x(x), y(y), z(z), w(w){}
-	float length() const { return qsqrt(x*x + y*y + z*z + w*w); }
-	union { float x, r; };
-	union { float y, g; };
-	union { float z, b; };
-	union { float w, a; };
-	float operator[](const int &i) const {
+	vec4() : x(0), y(0), z(0), w(0) {}
+	vec4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w){}
+	T length() const { return qsqrt(x*x + y*y + z*z + w*w); }
+	union { T x, r; };
+	union { T y, g; };
+	union { T z, b; };
+	union { T w, a; };
+	T operator[](const int &i) const {
 		return *((&x) + i);}
-	float& operator[](const int &i){
+	T& operator[](const int &i){
 		return *((&x) + i);}
 };
 
-struct vec3f
+template<typename T>
+struct vec3
 {
-	vec3f() : x(0), y(0), z(0){}
-	vec3f(float x, float y, float z) : x(x), y(y), z(z){}
-	vec3f(const vec4f& v) : x(v.x), y(v.y), z(v.z){}
-	float length() const {return qsqrt(x*x + y*y + z*z);}
-	union { float x, r; };
-	union { float y, g; };
-	union { float z, b; };
-	float operator[](const int &i) const {
+	vec3() : x(0), y(0), z(0){}
+	vec3(T x, T y, T z) : x(x), y(y), z(z){}
+	vec3(const vec4<T>& v) : x(v.x), y(v.y), z(v.z){}
+	T length() const { return qsqrt(x*x + y*y + z*z); }
+	union { T x, r; };
+	union { T y, g; };
+	union { T z, b; };
+	T operator[](const int &i) const {
 		return *((&x) + i);}
-	float& operator[](const int &i){
+	T& operator[](const int &i){
 		return *((&x) + i);}
 };
+
+template<typename T>
+struct vec2
+{
+	vec2() : x(0), y(0){}
+	vec2(T x, T y) : x(x), y(y){}
+	vec2(const vec2<T>& v) : x(v.x), y(v.y){}
+	union { T x, r; };
+	union { T y, g; };
+	T operator[](const int &i) const {
+		return *((&x) + i);}
+	T& operator[](const int &i){
+		return *((&x) + i);}
+};
+
+typedef vec4<float> vec4f;
+typedef vec3<float> vec3f;
+typedef vec2<float> vec2f;
+typedef vec4<int> vec4i;
+typedef vec3<int> vec3i;
+typedef vec2<int> vec2i;
+typedef vec4<double> vec4d;
+typedef vec3<double> vec3d;
+typedef vec2<double> vec2d;
 
 //Operators
 //addition and substraction
