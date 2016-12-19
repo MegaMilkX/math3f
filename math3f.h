@@ -1,5 +1,5 @@
-#ifndef _MATH3F_H_
-#define _MATH3F_H_
+#ifndef MATH3F_H
+#define MATH3F_H
 
 #include <math.h>
 #include <assert.h>
